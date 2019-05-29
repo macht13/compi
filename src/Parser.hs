@@ -9,7 +9,7 @@ import qualified Text.Parsec.Token as Tok
 import Lexer
 import Syntax
 
-binary s f assoc = Ex.Infix (reservedOp s >> return (BinOp f)) assoc
+binary s f assoc = Ex.Infix  (reservedOp s >> return (BinOp f)) assoc
 
 table = [[binary "*" Times Ex.AssocLeft,
           binary "/" Divide Ex.AssocLeft]

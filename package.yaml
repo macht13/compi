@@ -24,6 +24,10 @@ dependencies:
 - parsec
 - haskeline
 - mtl
+- ghc-paths
+- network
+- random
+- syb
 
 library:
   source-dirs: src
