@@ -1,5 +1,8 @@
 module Main where
 
+main :: IO ()
+main = putStrLn "Hello world"
+{-}
 import Parser
 
 import Control.Monad.Trans
@@ -24,3 +27,4 @@ main = runInputT defaultSettings loop
     case minput of
       Nothing -> outputStr ""
       Just input -> (liftIO $ process input) >> loop
+-}

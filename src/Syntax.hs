@@ -5,6 +5,14 @@ type Par = Id
 type Pars = [Par]
 type Stats = [Stat]
 
+{-
+  variable is a 64 bit value,
+  checked at runtime whether 0bit is:
+  0 -> rest >> 1 is 63 bit signed integer
+  1 -> rest - 1 ist 64 bit address
+-}
+type Var = Integer
+
 data Program
   = Program [Funcdef]
     deriving (Eq, Ord, Show)
@@ -15,13 +23,9 @@ data Funcdef
 
 data Stat
   = Return    Expr
-  | CondStat  Cond
+  | CondStat  (Maybe Id) [Guarded]
   | Vardef    Id Expr
   | Varasgn   Id Expr
-    deriving (Eq, Ord, Show)
-
-data Cond
-  = Cond (Maybe Id) [Guarded]
     deriving (Eq, Ord, Show)
 
 data Guarded
@@ -38,22 +42,22 @@ data Break
 
 data Expr =
   TermE Term
-  | TermOp [TeOp] Term
-  | BinOp BiOp Term [Term]
+  | TermOp [PreOp] Term
+  | BinOp BiOp [Term]
   | BoolOp BoOp Term Term
     deriving (Eq, Ord, Show)
 
 data Term =
   ParenExpr Expr
-  | NumT    Int
+  | NumT    Var
   | VarUsg  Id
   | FnCall  Id [Expr]
     deriving (Eq, Ord, Show)
 
-data TeOp
+data PreOp
   = Not
-  | Head
-  | Tail
+  | HeadOp
+  | TailOp
   | Islist
     deriving (Eq, Ord, Show)
 

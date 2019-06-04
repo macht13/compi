@@ -4,13 +4,14 @@ import Text.Parsec.String (Parser)
 import Text.Parsec.Char
 import Text.Parsec
 import Text.Parsec.Language (emptyDef)
-
 import qualified Text.Parsec.Token as Tok
+
+import Numeric
 
 lexer :: Tok.TokenParser ()
 lexer = Tok.makeTokenParser style
   where
-    ops = ["+","*","-",";"]
+    ops = [";","(",")",",","=",":","->","+","*",".",">=","-"]
     names = ["end","return","var","cond","continue","break","not","head","tail","islist","or"]
     style = emptyDef {
                Tok.commentStart = "{"
@@ -25,42 +26,23 @@ lexer = Tok.makeTokenParser style
 
 {-
 Necessary lexers:
-- number
-    - decimal (321...)
-    - hex ($Aa...)
-- identifier
-    - start with letters
-    - continue with letters/digits
-- keywords:
-    - end
-    - return
-    - var
-    - cond
-    - continue
-    - break
-    - not
-    - head
-    - tail
-    - islist
-    - or
 - lexeme: ; ( ) , = : -> + * . >= -
-- ignore space, \t, \n, comments { I am a comment }
+- ignore space, \t, \n
 -}
 
-integer :: Parser Integer
-integer = Tok.integer lexer
+num :: Parser Integer
+num = dec <|> hex
 
 dec :: Parser Integer
 dec = Tok.integer lexer
 
-parens'  :: Parser ()
-parens'  = do {
-               char '('
-             ; parens'
-             ; char ')'
-             ; parens'
-             }
-          <|> return ()
+hex :: Parser Integer
+hex = do
+  val <- hexStr
+  ; return $ fst $ head $ readHex val
+
+hexStr :: Parser String
+hexStr = char '$' *> many1 hexDigit
 
 float :: Parser Double
 float = Tok.float lexer
